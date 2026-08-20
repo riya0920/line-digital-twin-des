@@ -1,9 +1,9 @@
 # SE-3 — Production Line Digital Twin & What-If Simulator
 
-**Status: ~20% slice.** The engine, the validation suite, the experiment
-methodology (warm-up, replications, CIs, common random numbers), and the what-if
-scenarios are built. The live animation, the analysis dashboards, and CI
-integration are not.
+**Status: ~50% slice.** The engine, the validation suite, the experiment
+methodology (warm-up, replications, CIs, common random numbers), the what-if
+scenarios, the omitted-loss quantification and the investment memo are built. The
+live animation, the analysis dashboards, and CI integration are not.
 
 ```bash
 python run_twin.py               # ~8.5 min
@@ -175,7 +175,27 @@ just lower output.
 before a part is released and returned when it completes, so on a line never short
 of raw material the number outstanding is constant by construction.
 
-## What is NOT built (the other 80%)
+## Built in the second pass — see [docs/EXTENSIONS.md](docs/EXTENSIONS.md)
+
+`python extend.py` — the two gaps MODEL_VALIDITY ranked highest, plus the memo:
+
+- **"Name the missing 14 points", quantified.** MODEL_VALIDITY §2 listed the
+  omitted loss categories and said every one biases throughput up, without saying
+  by how much. Switching them on cumulatively — product mix, changeovers, operator
+  availability, quality loop — drops throughput **51.0 → 32.7 parts/h, a 36% fall**,
+  taking the model from 93% of constraint capacity to ~60% and bracketing the
+  65–70% a real line achieves.
+- **Cycle-time distribution sensitivity**, the assumption the buffer result rests
+  on. Exponential service times reward buffering **2.5× more** than constant ones —
+  but the constant case still gains, which refuted my prediction that it would gain
+  nothing. Setting cv = 0 removes only *one* variability source; the breakdowns are
+  still there, and on this line they dominate. The corollary: **reducing MTTR and
+  adding buffer are substitutes, not complements.**
+- **[docs/RECOMMENDATION.md](docs/RECOMMENDATION.md)** — the investment memo the
+  spec asks for: one capital item, three candidates, a recommendation with CIs, and
+  an explicit list of what would change it.
+
+## What is NOT built (the other 50%)
 
 1. **No animation.** The spec asks for a live view of parts, buffers, and
    blocking/starving states colour-coded, and is explicit that trust in
