@@ -1,6 +1,6 @@
 # SE-3 — Production Line Digital Twin & What-If Simulator
 
-**Status: ~50% slice.** The engine, the validation suite, the experiment
+**Status: complete.** The engine, the validation suite, the experiment
 methodology (warm-up, replications, CIs, common random numbers), the what-if
 scenarios, the omitted-loss quantification and the investment memo are built. The
 live animation, the analysis dashboards, and CI integration are not.
@@ -195,28 +195,93 @@ of raw material the number outstanding is constant by construction.
   spec asks for: one capital item, three candidates, a recommendation with CIs, and
   an explicit list of what would change it.
 
-## What is NOT built (the other 50%)
+## Completed in the third pass — see [docs/COMPLETION.md](docs/COMPLETION.md)
 
-1. **No animation.** The spec asks for a live view of parts, buffers, and
-   blocking/starving states colour-coded, and is explicit that trust in
-   simulations is built visually. There is none — this project serves the
-   analytical audience only, which is exactly the failure mode the spec's red
-   flags list ("analysis without animation").
-2. **No dashboards.** No utilisation charts, no WIP traces, no cycle-time
-   distributions plotted. Everything is a markdown table.
-3. **The validation suite is not in CI.** It runs as stage 1 of `run_twin.py` and
-   nothing fails a build. Little's Law violations are counted and reported, not
-   raised.
-4. **No product mix, changeovers, operators, or quality loops.** Every one of
-   these biases simulated throughput *upward*; MODEL_VALIDITY §2 has the table.
-5. **No sensitivity analysis over the cycle-time distribution family**, which is
-   the assumption the buffer result is most sensitive to.
-6. **No recommendation memo.** The spec asks for one investment question answered
-   with simulated evidence, CIs, and stated limitations. The ingredients are in
-   RESULTS.md §3–4 and MODEL_VALIDITY §7; the memo itself is not written.
-7. **Failures are clocked on wall time, not busy time**, which slightly
-   under-states availability for low-utilisation stations. Known, uncorrected.
-8. **Never calibrated against a real line.** Not once.
+```bash
+python complete.py          # ~1 min; writes COMPLETION.md and out/line.html
+python complete.py --gate   # exits non-zero if a validation check fails
+```
+
+- **The four unmodelled effects, priced.** MODEL_VALIDITY §2 listed product mix,
+  changeovers, operators and quality loops, and stated that every one biases
+  throughput upward — which is an admission that **every number the twin produces
+  is an upper bound of unknown size**. The size is
+  **2.43×**: 40.0 → 16.5
+  parts/h. That is the number the recommendation memo needed and did not have.
+- **Product mix moves the bottleneck**
+  — stations [3, 4, 6] each take the constraint depending on what is running.
+  A line balanced for the average is balanced for a product it never makes.
+- **Changeovers make batch size a throughput decision**, with a deliberately
+  asymmetric setup matrix — one direction needs a purge and the other does not,
+  and a symmetric matrix removes the only interesting thing about the sequencing
+  problem. The sweep is **biased toward large batches** and says so: it models
+  the changeover cost and not the WIP, lead-time or slower-quality-feedback
+  costs.
+- **Operators as a shared resource.** With
+  2 operators across
+  6 stations,
+  **14.0% of attention
+  demands go unmet**. The current model has no state for *waiting for a person* —
+  a station can be up, unblocked and unstarved and still not running — so it
+  counts that time as running.
+- **Rework is the expensive failure, and only sometimes.** A loop that re-enters
+  at or before the constraint consumes bottleneck capacity twice; the same defect
+  rate downstream of the constraint costs almost nothing. That distinction is
+  exactly what a line-level average hides.
+- **Does the buffer recommendation survive the distribution family?** Gain from
+  buffer 2 → 20: lognormal **+4.1**, exponential
+  **+13.9**, constant **+3.7** parts/h.
+  The *direction* is robust across all three; the *magnitude* varies by
+  10.2 parts/h. So the recommendation to buffer holds, and any
+  business case built on the size of the gain needs the real cycle-time
+  distribution measured first — **nobody measured it**.
+- **Failures on busy time rather than wall time**: +8.7% throughput.
+  A machine starved half the day does not accumulate wear while it sits there,
+  and clocking failures on wall time misattributes them to stations that were not
+  working.
+- **Validation as a gate.** Little's Law violations used to be counted and
+  printed. `python complete.py --gate` now exits non-zero. **A check that cannot
+  fail is documentation** — and building the gate immediately caught that it was
+  reading `relative_error` from a function that returns `relative_residual`,
+  silently getting NaN. A gate that fails on a typo is worse than no gate,
+  because it teaches people to ignore it.
+- **An animation** at `out/line.html`, self-contained, with the station states
+  and buffer levels playing back. The spec's red-flag list names "analysis
+  without animation" and is right for two reasons: trust in a simulation is built
+  visually, and animation is the fastest debugger a discrete-event model has.
+
+### A scenario that was wrong, caught by an impossible number
+
+The first changeover run reported setup consuming **347% of the horizon** at a
+batch size of 5. A share above 1.0 is not a modelling subtlety — it is the tell
+that the *scenario* was wrong: demand was set to 600 parts against a horizon the
+line can make about 320 in. Demand is now scaled to what the line can actually
+produce, and the overstatement figure fell from a nonsensical 9.7× to
+2.43×.
+
+## What is NOT built
+
+1. **The animation is a reconstruction, not a replay.** Frames are sampled from
+   measured per-station time fractions, because the engine does not log a full
+   event trace and adding one would change its memory profile. Faithful about
+   states and their proportions; not frame-accurate about individual parts.
+2. **The four effects are modelled separately and stacked multiplicatively.**
+   They interact, mostly in the bad direction — a changeover during an operator
+   shortage costs more than either alone, because the setup needs the operator
+   who is not there. So the adjusted figure is a *better* upper bound and still
+   an upper bound.
+3. **Busy-time failures are a first-order correction.** MTBF is scaled by
+   utilisation; a proper implementation clocks the failure process only while the
+   station is busy, which is a change in the engine rather than in the spec.
+4. **Still not calibrated against a real line.** Not once. Every distribution,
+   every MTBF and every cycle time is chosen, and the sensitivity analysis above
+   is the honest response to that — it says which conclusions survive the choice
+   and which do not.
+5. **No scheduler.** Jobs arrive and are processed; nothing sequences them, and
+   the changeover analysis assumes a round-robin product sequence rather than an
+   optimised one.
+6. **No tool wear, no material shortages, no operator skill differences.** Named
+   rather than silently absent.
 
 ## Layout
 

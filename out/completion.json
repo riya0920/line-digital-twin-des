@@ -1,0 +1,317 @@
+{
+ "quick": true,
+ "realism": {
+  "base_throughput": 40.0,
+  "bottleneck_index": 2,
+  "mix": {
+   "bottleneck_moves": true,
+   "distinct_bottlenecks": [
+    2,
+    3,
+    5
+   ]
+  },
+  "mix_by_product": {
+   "A": {
+    "bottleneck_index": 2,
+    "bottleneck_cycle_s": 82.12399787517235,
+    "capacity_per_hour": 43.8361513460653
+   },
+   "B": {
+    "bottleneck_index": 5,
+    "bottleneck_cycle_s": 55.75626031431462,
+    "capacity_per_hour": 64.56674066204816
+   },
+   "C": {
+    "bottleneck_index": 3,
+    "bottleneck_cycle_s": 73.46956721550731,
+    "capacity_per_hour": 48.99988031017207
+   }
+  },
+  "mix_penalty": 0.18738981966915524,
+  "changeover_sweep": [
+   {
+    "batch": 5,
+    "n_changeovers": 63,
+    "setup_seconds": 52621.51880360924,
+    "setup_share_of_horizon": 1.8271360695697652,
+    "parts_possible": 0.0,
+    "throughput_per_hour": 0.0,
+    "wip_parts": 5
+   },
+   {
+    "batch": 10,
+    "n_changeovers": 31,
+    "setup_seconds": 26553.670657999573,
+    "setup_share_of_horizon": 0.922002453402763,
+    "parts_possible": 38.729816241386665,
+    "throughput_per_hour": 4.841227030173333,
+    "wip_parts": 10
+   },
+   {
+    "batch": 20,
+    "n_changeovers": 15,
+    "setup_seconds": 12528.93304847839,
+    "setup_share_of_horizon": 0.43503239751661077,
+    "parts_possible": 280.5356370952002,
+    "throughput_per_hour": 35.06695463690002,
+    "wip_parts": 20
+   },
+   {
+    "batch": 40,
+    "n_changeovers": 7,
+    "setup_seconds": 6507.377780434149,
+    "setup_share_of_horizon": 0.22595061737618571,
+    "parts_possible": 384.3555555097561,
+    "throughput_per_hour": 48.04444443871951,
+    "wip_parts": 40
+   },
+   {
+    "batch": 80,
+    "n_changeovers": 3,
+    "setup_seconds": 2505.786609695678,
+    "setup_share_of_horizon": 0.08700647950332216,
+    "parts_possible": 453.34850672938484,
+    "throughput_per_hour": 56.668563341173105,
+    "wip_parts": 80
+   },
+   {
+    "batch": 160,
+    "n_changeovers": 1,
+    "setup_seconds": 1495.804561042793,
+    "setup_share_of_horizon": 0.05193765836954142,
+    "parts_possible": 470.7619903268484,
+    "throughput_per_hour": 58.84524879085605,
+    "wip_parts": 160
+   }
+  ],
+  "changeover_penalty": 0.43503239751661077,
+  "chosen_batch": 20,
+  "demand_per_product": 106,
+  "achievable_in_horizon": 320,
+  "operators": {
+   "n_operators": 2,
+   "n_stations": 6,
+   "attention_frac": 0.35,
+   "mean_stations_wanting_attention": 2.1015,
+   "fraction_of_demands_unmet": 0.13967666666666667,
+   "throughput_penalty_estimate": 0.04888683333333333,
+   "model": "binomial occupancy; crude, and the direction is the point"
+  },
+  "quality": {
+   "first_pass_yield": 0.94,
+   "scrap_frac": 0.02400000000000002,
+   "rework_frac_of_all": 0.03600000000000003,
+   "rework_passes_bottleneck": true,
+   "throughput_before": 40.0,
+   "throughput_after": 37.68339768339768,
+   "loss_per_hour": 2.316602316602321,
+   "loss_pct": 5.791505791505802
+  },
+  "combined": {
+   "ladder": [
+    {
+     "stage": "twin as built",
+     "throughput": 40.0
+    },
+    {
+     "stage": "after product mix",
+     "throughput": 32.50440721323379,
+     "factor": 0.8126101803308448
+    },
+    {
+     "stage": "after changeovers",
+     "throughput": 18.363937013404477,
+     "factor": 0.5649676024833892
+    },
+    {
+     "stage": "after operators",
+     "throughput": 17.46618228528634,
+     "factor": 0.9511131666666667
+    },
+    {
+     "stage": "after quality loop",
+     "throughput": 16.45462732667902,
+     "factor": 0.942084942084942
+    }
+   ],
+   "base": 40.0,
+   "adjusted": 16.45462732667902,
+   "total_overstatement": 2.4309271310657548,
+   "caveat": "multiplicative and therefore approximate; the effects interact, mostly in the bad direction -- a changeover during an operator shortage costs more than either alone, because the setup needs the operator who is not there"
+  },
+  "asymmetry_example": {
+   "A->A": 0.0,
+   "A->B": 1496.0,
+   "A->C": 1500.0,
+   "B->A": 1044.0,
+   "B->B": 0.0,
+   "B->C": 686.0
+  }
+ },
+ "distribution": {
+  "rows": [
+   {
+    "dist": "lognormal",
+    "buffer": 2,
+    "throughput": 54.266666666666666,
+    "sd": 2.9333333333333336,
+    "reps": 2
+   },
+   {
+    "dist": "lognormal",
+    "buffer": 5,
+    "throughput": 56.06666666666666,
+    "sd": 1.6666666666666679,
+    "reps": 2
+   },
+   {
+    "dist": "lognormal",
+    "buffer": 20,
+    "throughput": 58.4,
+    "sd": 0.13333333333333286,
+    "reps": 2
+   },
+   {
+    "dist": "exponential",
+    "buffer": 2,
+    "throughput": 44.4,
+    "sd": 0.3999999999999986,
+    "reps": 2
+   },
+   {
+    "dist": "exponential",
+    "buffer": 5,
+    "throughput": 51.733333333333334,
+    "sd": 0.6666666666666679,
+    "reps": 2
+   },
+   {
+    "dist": "exponential",
+    "buffer": 20,
+    "throughput": 58.33333333333333,
+    "sd": 1.6666666666666679,
+    "reps": 2
+   },
+   {
+    "dist": "constant",
+    "buffer": 2,
+    "throughput": 54.66666666666667,
+    "sd": 0.8000000000000007,
+    "reps": 2
+   },
+   {
+    "dist": "constant",
+    "buffer": 5,
+    "throughput": 56.0,
+    "sd": 0.2666666666666657,
+    "reps": 2
+   },
+   {
+    "dist": "constant",
+    "buffer": 20,
+    "throughput": 58.400000000000006,
+    "sd": 1.466666666666665,
+    "reps": 2
+   }
+  ],
+  "by_dist": {
+   "lognormal": {
+    "2": 54.266666666666666,
+    "5": 56.06666666666666,
+    "20": 58.4
+   },
+   "exponential": {
+    "2": 44.4,
+    "5": 51.733333333333334,
+    "20": 58.33333333333333
+   },
+   "constant": {
+    "2": 54.66666666666667,
+    "5": 56.0,
+    "20": 58.400000000000006
+   }
+  },
+  "buffer_gain_b2_to_b20": {
+   "lognormal": 4.133333333333333,
+   "exponential": 13.93333333333333,
+   "constant": 3.7333333333333343
+  },
+  "gain_spread": 10.199999999999996,
+  "recommendation_stable": true
+ },
+ "busy_time": {
+  "wall_clock_throughput": 52.13333333333333,
+  "busy_time_throughput": 56.666666666666664,
+  "delta": 4.533333333333331,
+  "pct": 8.69565217391304,
+  "utilisation": {
+   "S1-cut": 0.6277350378724542,
+   "S2-form": 0.6626129229618514,
+   "S3-weld": 0.871713686164819,
+   "S4-machine": 0.6774342651971311,
+   "S5-paint": 0.6416576875824653,
+   "S6-inspect": 0.5760412869512207
+  },
+  "down_frac_before": {
+   "S1-cut": 0.03862817188780438,
+   "S2-form": 0.1023595297508181,
+   "S3-weld": 0.10008441715318869,
+   "S4-machine": 0.024909269777830395,
+   "S5-paint": 0.029600934955760085,
+   "S6-inspect": 0.0
+  },
+  "down_frac_after": {
+   "S1-cut": 0.03862817188780437,
+   "S2-form": 0.07462532052054434,
+   "S3-weld": 0.030214626135701413,
+   "S4-machine": 0.013291070351633797,
+   "S5-paint": 0.02960093495575999,
+   "S6-inspect": 0.0
+  },
+  "method": "first-order: MTBF scaled by utilisation. A proper implementation clocks the failure process only while the station is busy, which needs a change in the engine rather than in the spec."
+ },
+ "gate": {
+  "checks": [
+   {
+    "check": "Little's Law (L = lambda W)",
+    "value": 0.005315475076583647,
+    "limit": 0.05,
+    "passed": true,
+    "why": "WIP, throughput and cycle time must be mutually consistent; if they are not, one of them is measured over the wrong window"
+   },
+   {
+    "check": "throughput <= bottleneck effective capacity",
+    "value": 55.86666666666667,
+    "limit": 55.862068965517246,
+    "passed": true,
+    "why": "a line cannot beat its constraint; exceeding it means the constraint is mis-identified or the warm-up is being counted"
+   },
+   {
+    "check": "conservation: created >= completed",
+    "value": 441,
+    "limit": 460,
+    "passed": true,
+    "why": "parts cannot be created by the simulation"
+   },
+   {
+    "check": "station time fractions sum to <= 1",
+    "value": 1.0,
+    "limit": 1.0,
+    "passed": true,
+    "why": "a station cannot be in two states at once"
+   }
+  ],
+  "n_failed": 0,
+  "exit_code": 0,
+  "gate": "python complete.py --gate  (exits non-zero on failure)"
+ },
+ "animation": {
+  "path": "C:\\Users\\riyas\\Desktop\\manufacturing-hm\\se3-line-digital-twin\\out\\line.html",
+  "bytes": 34373,
+  "n_frames": 240,
+  "self_contained": true,
+  "limit": "reconstructed from time fractions, not an event replay"
+ },
+ "wall_seconds": 6.443356000003405
+}
