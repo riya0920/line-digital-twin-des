@@ -34,6 +34,15 @@ class StationSpec:
     mttr_s: float | None = None
     buffer_after: int = 5         # capacity of the buffer DOWNSTREAM of this station
     dist: str = "lognormal"       # "lognormal" | "exponential" | "constant"
+    # "wall" clocks the failure process on elapsed time; "busy" clocks it only
+    # while the station is actually cutting. A machine starved half the day does
+    # not accumulate wear while it sits there, so wall-clock MTBF gives an idle
+    # station the same failure rate as one running flat out -- which understates
+    # the availability of lightly-loaded stations and, worse, misattributes
+    # failures to stations that were not working.
+    #
+    # Default "wall" so every previously published number stays reproducible.
+    failure_clock: str = "wall"
 
 
 @dataclass
@@ -66,11 +75,16 @@ class RunResult:
     # during warm-up. Welch's method needs the transient, so the engine keeps it
     # and the experiment layer decides what to exclude -- not the other way round.
     entry_exit: np.ndarray = field(default_factory=lambda: np.zeros((0, 2)))
+    # (t, station, state) transitions, empty unless simulate(log_events=True).
+    # A transition log rather than periodic samples: a sampled log has to pick a
+    # rate, and any rate coarse enough to be small misses the micro-stops that
+    # are the whole reason to look at a line second by second.
+    events: list = field(default_factory=list)
 
 
 class _Station:
     def __init__(self, env, spec: StationSpec, rng, in_store, out_store, stats,
-                 fail_rng=None):
+                 fail_rng=None, event_log=None):
         self.env = env
         self.spec = spec
         self.rng = rng
@@ -83,9 +97,29 @@ class _Station:
         self.starved_s = 0.0
         self.down_s = 0.0
         self.up = True
-        if spec.mtbf_s:
+        # Remaining BUSY seconds before the next failure. Only used when the
+        # spec asks for busy-time clocking; drawn from the same exponential, so
+        # the two modes differ in what the clock counts and nothing else.
+        self.life_s = (self.fail_rng.exponential(spec.mtbf_s)
+                       if spec.mtbf_s and spec.failure_clock == "busy" else None)
+        self.event_log = event_log
+        self._state = "starved"
+        if spec.mtbf_s and spec.failure_clock == "wall":
             env.process(self._failures())
         env.process(self._run())
+
+    def _emit(self, state: str) -> None:
+        """Record a state TRANSITION, not a sample.
+
+        Transitions rather than periodic samples, because a periodic log has to
+        choose a rate: too coarse and it misses every micro-stop, too fine and
+        the log is larger than the simulation. A transition log is exact and its
+        size is set by how much actually happened.
+        """
+        if self.event_log is None or state == self._state:
+            return
+        self.event_log.append((float(self.env.now), self.spec.name, state))
+        self._state = state
 
     def _cycle(self) -> float:
         """Lognormal cycle time with the requested mean and CV.
@@ -120,17 +154,50 @@ class _Station:
     def _run(self):
         while True:
             t0 = self.env.now
+            self._emit("starved")
             part = yield self.in_store.get()
             self.starved_s += self.env.now - t0
 
             while not self.up:
+                self._emit("down")
                 yield self.env.timeout(1.0)
 
-            t0 = self.env.now
-            yield self.env.timeout(self._cycle())
-            self.busy_s += self.env.now - t0
+            remaining = self._cycle()
+            while remaining > 1e-9:
+                if self.life_s is None:
+                    # Wall-clock mode: the separate _failures process owns the
+                    # up/down flag, so the cycle just runs.
+                    self._emit("running")
+                    t0 = self.env.now
+                    yield self.env.timeout(remaining)
+                    self.busy_s += self.env.now - t0
+                    remaining = 0.0
+                    continue
+
+                # Busy-time mode: run until either the cycle finishes or the
+                # station's remaining BUSY life runs out, whichever comes first.
+                # Splitting the cycle is what makes the failure land in the
+                # middle of the work rather than tidily between parts.
+                step = min(remaining, self.life_s)
+                self._emit("running")
+                t0 = self.env.now
+                yield self.env.timeout(step)
+                worked = self.env.now - t0
+                self.busy_s += worked
+                self.life_s -= worked
+                remaining -= worked
+                if self.life_s <= 1e-9:
+                    self.up = False
+                    self._emit("down")
+                    t0 = self.env.now
+                    yield self.env.timeout(
+                        self.fail_rng.exponential(self.spec.mttr_s))
+                    self.down_s += self.env.now - t0
+                    self.up = True
+                    self.life_s = self.fail_rng.exponential(self.spec.mtbf_s)
 
             t0 = self.env.now
+            self._emit("blocked")
             yield self.out_store.put(part)   # blocks if the buffer is full
             self.blocked_s += self.env.now - t0
 
@@ -168,7 +235,8 @@ def streams(seed: int, n_stations: int) -> dict:
 
 
 def simulate(spec: LineSpec, horizon_s: float, seed: int, warmup_s: float = 0.0,
-             rng: np.random.Generator | None = None) -> RunResult:
+             rng: np.random.Generator | None = None,
+             log_events: bool = False) -> RunResult:
     rstreams = streams(seed, len(spec.stations))
     rng = rstreams["arrivals"]
     env = simpy.Environment()
@@ -212,18 +280,40 @@ def simulate(spec: LineSpec, horizon_s: float, seed: int, warmup_s: float = 0.0,
             _accrue(env.now)
             created["n"] += 1
             yield stores[0].put({"t_in": env.now})
+            if sink_obj is not None:
+                sink_obj.append((env.now, "_release", "release"))
 
     def sink():
         while True:
             part = yield stores[-1].get()
             _accrue(env.now)
             completed.append((part["t_in"], env.now))
+            if sink_obj is not None:
+                sink_obj.append((env.now, "_sink", "complete"))
             if conwip is not None:
                 yield conwip.put(1)
 
+    class _Sink:
+        """Enriches each station transition with the buffer levels at that
+        instant. Buffer levels only change when a part moves, and a part moving
+        is always a station transition, so snapshotting here is exact rather
+        than sampled -- the releaser and the sink emit their own rows for the
+        two moves that happen at the ends of the line."""
+        __slots__ = ("rows",)
+
+        def __init__(self):
+            self.rows = []
+
+        def append(self, ev):
+            t, name, state = ev
+            self.rows.append((t, name, state,
+                              tuple(len(st.items) for st in stores)))
+
+    sink_obj = _Sink() if log_events else None
+    events = sink_obj
     stations = [
         _Station(env, sp, rstreams["cycle"][i], stores[i], stores[i + 1], None,
-                 fail_rng=rstreams["failure"][i])
+                 fail_rng=rstreams["failure"][i], event_log=events)
         for i, sp in enumerate(spec.stations)
     ]
     env.process(releaser())
@@ -250,6 +340,8 @@ def simulate(spec: LineSpec, horizon_s: float, seed: int, warmup_s: float = 0.0,
         wip_area=wip_area["v"],
         observed_time=wip_area["obs"],
         entry_exit=np.array(completed, dtype=float).reshape(-1, 2),
+        events=(sorted(sink_obj.rows, key=lambda e: e[0])
+                if sink_obj is not None else []),
     )
 
 

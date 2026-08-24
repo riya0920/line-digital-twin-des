@@ -1,0 +1,464 @@
+{
+  "sequencing": {
+    "rules": {
+      "fifo": {
+        "makespan_s": 26957.51530347132,
+        "setup_s": 5207.515303471317,
+        "idle_s": 0.0,
+        "run_s": 21750.0,
+        "total_tardiness_s": 20923.876293559522,
+        "max_lateness_s": 11624.348415111519,
+        "n_late": 3,
+        "n_jobs": 9,
+        "on_time_frac": 0.6666666666666667,
+        "order": [
+          "J01",
+          "J02",
+          "J03",
+          "J04",
+          "J05",
+          "J06",
+          "J07",
+          "J08",
+          "J09"
+        ]
+      },
+      "spt": {
+        "makespan_s": 30216.618892506125,
+        "setup_s": 8466.618892506125,
+        "idle_s": 0.0,
+        "run_s": 21750.0,
+        "total_tardiness_s": 36920.46247638389,
+        "max_lateness_s": 14883.452004146326,
+        "n_late": 4,
+        "n_jobs": 9,
+        "on_time_frac": 0.5555555555555556,
+        "order": [
+          "J01",
+          "J07",
+          "J03",
+          "J05",
+          "J02",
+          "J06",
+          "J08",
+          "J04",
+          "J09"
+        ]
+      },
+      "edd": {
+        "makespan_s": 29748.899667929138,
+        "setup_s": 7998.899667929138,
+        "idle_s": 0.0,
+        "run_s": 21750.0,
+        "total_tardiness_s": 11406.428718572728,
+        "max_lateness_s": 5201.98866152449,
+        "n_late": 5,
+        "n_jobs": 9,
+        "on_time_frac": 0.4444444444444444,
+        "order": [
+          "J02",
+          "J04",
+          "J03",
+          "J08",
+          "J09",
+          "J05",
+          "J07",
+          "J06",
+          "J01"
+        ]
+      },
+      "min_setup": {
+        "makespan_s": 24508.3348720665,
+        "setup_s": 2758.334872066501,
+        "idle_s": 0.0,
+        "run_s": 21750.0,
+        "total_tardiness_s": 15264.41474821661,
+        "max_lateness_s": 9175.167983706702,
+        "n_late": 2,
+        "n_jobs": 9,
+        "on_time_frac": 0.7777777777777778,
+        "order": [
+          "J02",
+          "J03",
+          "J04",
+          "J05",
+          "J06",
+          "J01",
+          "J07",
+          "J08",
+          "J09"
+        ]
+      },
+      "atc": {
+        "makespan_s": 25408.724132463718,
+        "setup_s": 3658.724132463719,
+        "idle_s": 0.0,
+        "run_s": 21750.0,
+        "total_tardiness_s": 5051.280609846002,
+        "max_lateness_s": 3027.167983706702,
+        "n_late": 2,
+        "n_jobs": 9,
+        "on_time_frac": 0.7777777777777778,
+        "order": [
+          "J02",
+          "J04",
+          "J03",
+          "J05",
+          "J08",
+          "J09",
+          "J07",
+          "J01",
+          "J06"
+        ]
+      }
+    },
+    "exact_setup_s": 2623.112626665677,
+    "exact_order": [
+      "J02",
+      "J09",
+      "J08",
+      "J07",
+      "J01",
+      "J06",
+      "J05",
+      "J04",
+      "J03"
+    ],
+    "nearest_neighbour_s": 2758.334872066501,
+    "round_robin_s": 10619.182065860456,
+    "round_robin_penalty_pct": 304.83134265412156,
+    "gaps": [
+      {
+        "seed": 1,
+        "optimal_s": 2422.7432172005947,
+        "nn_s": 2422.7432172005947,
+        "nn_gap_pct": 0.0,
+        "oropt_s": 2422.7432172005947,
+        "oropt_gap_pct": 0.0
+      },
+      {
+        "seed": 2,
+        "optimal_s": 2175.2098907652926,
+        "nn_s": 2748.7252424271055,
+        "nn_gap_pct": 26.36597755906838,
+        "oropt_s": 2569.230102604079,
+        "oropt_gap_pct": 18.11412376854173
+      },
+      {
+        "seed": 5,
+        "optimal_s": 2286.916983790053,
+        "nn_s": 3447.107250226428,
+        "nn_gap_pct": 50.73163016672424,
+        "oropt_s": 2541.9706621943164,
+        "oropt_gap_pct": 11.152730082119945
+      },
+      {
+        "seed": 7,
+        "optimal_s": 2679.406005349333,
+        "nn_s": 4275.300975256645,
+        "nn_gap_pct": 59.56152097596138,
+        "oropt_s": 3383.6434738076414,
+        "oropt_gap_pct": 26.283342914523768
+      }
+    ],
+    "backward_tight": {
+      "release_s": -2758.334872066501,
+      "feasible": false,
+      "slack_s": -2758.334872066501,
+      "total_setup_s": 2758.334872066501,
+      "ready_violations": [
+        {
+          "jid": "J02",
+          "ready_s": 0.0,
+          "latest_start_s": -2758.334872066501
+        }
+      ]
+    },
+    "backward_loose": {
+      "release_s": 5941.665127933496,
+      "feasible": true,
+      "slack_s": 5941.665127933496,
+      "total_setup_s": 2758.334872066501,
+      "ready_violations": []
+    },
+    "n_jobs": 9,
+    "products": [
+      "A",
+      "B",
+      "D"
+    ]
+  },
+  "busy_clock": {
+    "wall": {
+      "throughput": 51.85149572649572,
+      "half_width": 0.8854199340309421,
+      "down_frac": {
+        "S1-cut": 0.0413957048206026,
+        "S2-form": 0.044372637342642345,
+        "S3-weld": 0.09434787602797251,
+        "S4-machine": 0.04480866171192901,
+        "S5-paint": 0.07835496632409625,
+        "S6-inspect": 0.0
+      }
+    },
+    "first_order": {
+      "throughput": 54.19017094017094,
+      "half_width": 0.8250543308104067,
+      "down_frac": {
+        "S1-cut": 0.02425639878691432,
+        "S2-form": 0.030295420495796255,
+        "S3-weld": 0.07970448152582188,
+        "S4-machine": 0.030098624016805093,
+        "S5-paint": 0.04918512536254563,
+        "S6-inspect": 0.0
+      }
+    },
+    "exact": {
+      "throughput": 52.65064102564102,
+      "half_width": 0.9200675782325625,
+      "down_frac": {
+        "S1-cut": 0.024955171660656906,
+        "S2-form": 0.03209818868107775,
+        "S3-weld": 0.08752015150329294,
+        "S4-machine": 0.030879139622329927,
+        "S5-paint": 0.05444928916322753,
+        "S6-inspect": 0.0
+      }
+    },
+    "per_station": [
+      {
+        "station": "S1-cut",
+        "utilisation": 0.6048831010621655,
+        "down_wall": 0.0413957048206026,
+        "down_first_order": 0.02425639878691432,
+        "down_exact": 0.024955171660656906,
+        "exact_over_wall": 0.6028444682559613,
+        "first_order_error_pct": -2.80011247065167
+      },
+      {
+        "station": "S2-form",
+        "utilisation": 0.6470339286856677,
+        "down_wall": 0.044372637342642345,
+        "down_first_order": 0.030295420495796255,
+        "down_exact": 0.03209818868107775,
+        "exact_over_wall": 0.7233779780367307,
+        "first_order_error_pct": -5.61641718538544
+      },
+      {
+        "station": "S3-weld",
+        "utilisation": 0.8320503308640594,
+        "down_wall": 0.09434787602797251,
+        "down_first_order": 0.07970448152582188,
+        "down_exact": 0.08752015150329294,
+        "exact_over_wall": 0.9276324511782833,
+        "first_order_error_pct": -8.9301376234215
+      },
+      {
+        "station": "S4-machine",
+        "utilisation": 0.6756815885737041,
+        "down_wall": 0.04480866171192901,
+        "down_first_order": 0.030098624016805093,
+        "down_exact": 0.030879139622329927,
+        "exact_over_wall": 0.689133271170856,
+        "first_order_error_pct": -2.5276468679859603
+      },
+      {
+        "station": "S5-paint",
+        "utilisation": 0.6318578092690242,
+        "down_wall": 0.07835496632409625,
+        "down_first_order": 0.04918512536254563,
+        "down_exact": 0.05444928916322753,
+        "exact_over_wall": 0.6949053993337359,
+        "first_order_error_pct": -9.668011982490793
+      }
+    ],
+    "correction_size": 0.7991452991453016,
+    "first_order_overshoot": 1.5395299145299148,
+    "first_order_error_pct": 2.92404780747144,
+    "utilisation": {
+      "S1-cut": 0.6048831010621655,
+      "S2-form": 0.6470339286856677,
+      "S3-weld": 0.8320503308640594,
+      "S4-machine": 0.6756815885737041,
+      "S5-paint": 0.6318578092690242,
+      "S6-inspect": 0.5740117521878751
+    }
+  },
+  "sweep": {
+    "rows": [
+      {
+        "arrival_mean_s": 33.0,
+        "utilisation": 0.8981872040357886,
+        "down_wall": 0.0759370932850846,
+        "down_first_order": 0.06681060905491108,
+        "down_exact": 0.07236915069838346,
+        "ratio_exact_over_wall": 0.9530144961790109,
+        "first_order_error_pct": -7.680816466451272
+      },
+      {
+        "arrival_mean_s": 40.0,
+        "utilisation": 0.7476934303388114,
+        "down_wall": 0.0759370932850846,
+        "down_first_order": 0.05329101744987739,
+        "down_exact": 0.05888571463923118,
+        "ratio_exact_over_wall": 0.7754538933714675,
+        "first_order_error_pct": -9.500941312558107
+      },
+      {
+        "arrival_mean_s": 50.0,
+        "utilisation": 0.6002540099062855,
+        "down_wall": 0.0759370932850846,
+        "down_first_order": 0.043630123240524094,
+        "down_exact": 0.04589275147671877,
+        "ratio_exact_over_wall": 0.6043522275000341,
+        "first_order_error_pct": -4.930251866337761
+      },
+      {
+        "arrival_mean_s": 70.0,
+        "utilisation": 0.4299964230104608,
+        "down_wall": 0.0759370932850846,
+        "down_first_order": 0.030679179868143048,
+        "down_exact": 0.03160337630445581,
+        "ratio_exact_over_wall": 0.41617837788193657,
+        "first_order_error_pct": -2.9243598133610123
+      },
+      {
+        "arrival_mean_s": 120.0,
+        "utilisation": 0.25039097928767634,
+        "down_wall": 0.0759370932850846,
+        "down_first_order": 0.020038374887466556,
+        "down_exact": 0.01990002609889655,
+        "ratio_exact_over_wall": 0.2620593604259707,
+        "first_order_error_pct": 0.6952191312838492
+      }
+    ]
+  },
+  "replay": {
+    "n_events": 9591,
+    "events_per_part": 23.05528846153846,
+    "bytes_per_event_estimate": 48,
+    "fidelity": [
+      {
+        "station": "S1-cut",
+        "frames_running": 0.7015,
+        "measured_running": 0.723055071270034,
+        "abs_error": 0.021555071270033976
+      },
+      {
+        "station": "S2-form",
+        "frames_running": 0.749,
+        "measured_running": 0.7593487201096945,
+        "abs_error": 0.010348720109694454
+      },
+      {
+        "station": "S3-weld",
+        "frames_running": 0.9535,
+        "measured_running": 0.9532484568270725,
+        "abs_error": 0.00025154317292752637
+      },
+      {
+        "station": "S4-machine",
+        "frames_running": 0.788,
+        "measured_running": 0.7893780153566935,
+        "abs_error": 0.0013780153566934628
+      },
+      {
+        "station": "S5-paint",
+        "frames_running": 0.71,
+        "measured_running": 0.7197082046636953,
+        "abs_error": 0.009708204663695374
+      },
+      {
+        "station": "S6-inspect",
+        "frames_running": 0.659,
+        "measured_running": 0.6549410943133801,
+        "abs_error": 0.004058905686619929
+      }
+    ],
+    "worst_fidelity": 0.021555071270033976,
+    "compare": {
+      "n_frames": 2000,
+      "marginal_max_abs_error": {
+        "S1-cut": 0.03500000000000003,
+        "S2-form": 0.046500000000000014,
+        "S3-weld": 0.0685,
+        "S4-machine": 0.01849999999999996,
+        "S5-paint": 0.04949999999999999,
+        "S6-inspect": 0.11650000000000005
+      },
+      "worst_marginal": 0.11650000000000005,
+      "joint_mean_abs_corr_error": 0.14995179942729983,
+      "replay_buffers": {
+        "mean": [
+          4.986,
+          4.851,
+          0.338,
+          0.0605,
+          0.0545
+        ],
+        "max": [
+          5.0,
+          5.0,
+          2.0,
+          1.0,
+          1.0
+        ]
+      },
+      "reconstruction_buffers": {
+        "mean": [
+          1.9755,
+          0.8765,
+          4.3045,
+          2.8375,
+          3.3
+        ],
+        "max": [
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          5.0
+        ]
+      },
+      "bottleneck_index": 2,
+      "bottleneck": "S3-weld",
+      "replay_signature": {
+        "upstream_mean": 4.9185,
+        "downstream_mean": 0.151,
+        "correct_sign": true
+      },
+      "reconstruction_signature": {
+        "upstream_mean": 1.426,
+        "downstream_mean": 3.4806666666666666,
+        "correct_sign": false
+      },
+      "station_names": [
+        "S1-cut",
+        "S2-form",
+        "S3-weld",
+        "S4-machine",
+        "S5-paint",
+        "S6-inspect"
+      ]
+    },
+    "rendered": {
+      "replay": {
+        "path": "C:\\Users\\riyas\\Desktop\\manufacturing-hm\\se3-line-digital-twin\\out\\animation_replay.html",
+        "bytes": 33764,
+        "n_frames": 240,
+        "self_contained": true,
+        "mode": "replay",
+        "limit": "replayed from the engine's event log: every station transition and every buffer level at the instant it changed, sampled onto a fixed grid. Between two samples the line does whatever it did; a stoppage shorter than the frame interval can still fall between frames."
+      },
+      "reconstruct": {
+        "path": "C:\\Users\\riyas\\Desktop\\manufacturing-hm\\se3-line-digital-twin\\out\\animation_reconstructed.html",
+        "bytes": 33759,
+        "n_frames": 240,
+        "self_contained": true,
+        "mode": "reconstruct",
+        "limit": "reconstructed from measured per-station time fractions, not replayed. Faithful about states and their proportions, and NOT about which states coincide -- the stations are drawn independently, and the buffer levels come from a heuristic rather than from the run."
+      }
+    }
+  },
+  "elapsed_s": 95.50573897361755
+}

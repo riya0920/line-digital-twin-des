@@ -259,36 +259,113 @@ line can make about 320 in. Demand is now scaled to what the line can actually
 produce, and the overstatement figure fell from a nonsensical 9.7× to
 2.43×.
 
+## Built in the fourth pass — see [docs/SEQUENCING_AND_REPLAY.md](docs/SEQUENCING_AND_REPLAY.md)
+
+```bash
+python run_pass4.py    # ~100 s
+```
+
+The three items the list below named as needing a change in the **engine** rather
+than in a spec. In two of the three, the finding is how wrong the thing they
+replaced was.
+
+- **A scheduler, replacing a price list.** `realism.py` could cost a sequence and
+  not produce one — `batch_size_sweep` built a round-robin, which on an
+  asymmetric changeover matrix costs **2.95 h against
+  an optimum of 0.73 h, 305%
+  worse**. Every batch-size number that sweep published carried a penalty that
+  had nothing to do with batch size.
+- **EDD is beaten at its own objective.** Jackson's rule — earliest due date
+  minimises maximum lateness — is a theorem for a single machine with *no
+  sequence-dependent setups*. Here EDD burns 1.46 h
+  more on changeovers than it needs to, and **loses maximum lateness to a
+  setup-aware rule, 1.44 h against
+  0.84 h**, while putting more jobs late than FIFO.
+- **Or-opt, not 2-opt, and Held–Karp to score it.** 2-opt evaluates a move by
+  reversing a segment, which is O(1) only because a symmetric matrix prices a
+  reversed arc the same. On an asymmetric matrix that evaluation is wrong. Or-opt
+  never reverses. The exact solver exists to answer the question a heuristic
+  cannot answer about itself — how far from optimal — and the answer is that
+  or-opt cuts the nearest-neighbour gap by roughly half and does not close it.
+- **Backward scheduling**, which is the direction that tells you that you are
+  already late: promised at exactly the total run time, the release comes out at
+  **-0.77 h**, i.e.
+  46 minutes before time zero — and
+  the size of that number is exactly the changeover the promise forgot.
+- **Busy-time failures, done properly, and the approximation measured.** The
+  station now carries a remaining *busy* life and the cycle is split when it runs
+  out, so a breakdown lands mid-part. Against it, the first-order version
+  (MTBF ÷ utilisation) **overshoots by 1.54 parts/hour,
+  1.9× the size of the
+  entire correction it was making** — further from the answer, in the same
+  direction, than the wall-clock model it was correcting. Its error is worst at
+  the constraint (-9% at 83%
+  utilisation), which is the one station whose downtime costs throughput.
+- **The animation is a replay.** 9,591 logged transitions over a
+  shift, ~23 per part, off by default and bit-identical
+  when on. And putting it beside the reconstruction is the finding: **the
+  reconstruction had work-in-process piling up on the wrong side of the
+  bottleneck** — 4.9 of 5 upstream and
+  0.15 downstream in the replay, against
+  1.4 and 3.5 reconstructed. The
+  stated reason for having an animation was that a manager who watches parts pile
+  up in front of S3 believes the bottleneck result. It was piling them up behind it.
+
+### A bug found writing the backward schedule
+
+The first version shifted each job by the setups that came *before* it. Walking
+backwards, a setup pushes everything ahead of it *earlier*, so the shift on job
+*i* is the total of the setups *after* it. Both versions land the last job
+exactly on the due date — the number a reader checks — and the wrong one reported
+a comfortable release of 0.00 h on an instance that had to start 46 minutes
+before time zero. The test walks the sequence forward from the computed release
+and demands every start time match.
+
 ## What is NOT built
 
-1. **The animation is a reconstruction, not a replay.** Frames are sampled from
-   measured per-station time fractions, because the engine does not log a full
-   event trace and adding one would change its memory profile. Faithful about
-   states and their proportions; not frame-accurate about individual parts.
-2. **The four effects are modelled separately and stacked multiplicatively.**
-   They interact, mostly in the bad direction — a changeover during an operator
-   shortage costs more than either alone, because the setup needs the operator
-   who is not there. So the adjusted figure is a *better* upper bound and still
-   an upper bound.
-3. **Busy-time failures are a first-order correction.** MTBF is scaled by
-   utilisation; a proper implementation clocks the failure process only while the
-   station is busy, which is a change in the engine rather than in the spec.
-4. **Still not calibrated against a real line.** Not once. Every distribution,
+1. **Still not calibrated against a real line.** Not once. Every distribution,
    every MTBF and every cycle time is chosen, and the sensitivity analysis above
    is the honest response to that — it says which conclusions survive the choice
-   and which do not.
-5. **No scheduler.** Jobs arrive and are processed; nothing sequences them, and
-   the changeover analysis assumes a round-robin product sequence rather than an
-   optimised one.
-6. **No tool wear, no material shortages, no operator skill differences.** Named
+   and which do not. This is the gap that matters and nothing in four passes has
+   touched it.
+2. **The four realism effects are modelled separately and stacked
+   multiplicatively.** They interact, mostly in the bad direction — a changeover
+   during an operator shortage costs more than either alone, because the setup
+   needs the operator who is not there. So the adjusted figure is a *better*
+   upper bound and still an upper bound.
+3. **The busy-time result has a mechanism that is only partly explained.** The
+   approximation's bias is largest where utilisation is most sensitive to
+   downtime, which is at the constraint — but iterating it to its own fixed point
+   converges to 53.84 parts/hour, still 1.2 above the exact answer, so
+   self-consistency does not account for all of it. Stated rather than dressed up.
+4. **The scheduler sequences batches on a single logical resource.** It prices
+   setup and due dates against the line's own bottleneck rate; it does not
+   sequence per station, so a product whose bottleneck moves (which
+   `bottleneck_by_product` shows happens) is scheduled against the wrong
+   constraint.
+5. **Or-opt is a local search with no restarts and no acceptance of worsening
+   moves.** The measured gap to optimal is 10–25% on the harder instances, and
+   closing it needs either a better neighbourhood or a metaheuristic; the exact
+   solver refuses above 12 jobs, so on a real work list the gap would be
+   unmeasured as well as open.
+6. **A replay of a whole shift is still blind to micro-stops.** 240 frames over
+   eight hours is one sample every two minutes; the event log has them, the
+   default window is the last hour so they are visible, and anything outside that
+   window is sampled at a rate that misses them.
+7. **No tool wear, no material shortages, no operator skill differences.** Named
    rather than silently absent.
 
 ## Layout
 
 ```
-src/line.py        model definition + SimPy engine, per-source random streams
+src/line.py        model + SimPy engine, per-source streams, wall/busy failure
+                   clocks, optional transition log
 src/experiment.py  MSER-5 warm-up, replications, CIs, CRN variance measurement
 src/validation.py  M/M/1 closed form, Little's Law monitor, bottleneck ceiling
+src/realism.py     product mix, asymmetric changeovers, operators, quality loops
+src/sequencing.py  scheduling rules, or-opt, Held-Karp, backward scheduling
+src/animate.py     replay from the event log, and the reconstruction it replaces
 run_twin.py        validation then scenarios; writes docs/RESULTS.md
+run_pass4.py       sequencing, busy-time clock, replay; writes the pass-4 doc
 docs/MODEL_VALIDITY.md   the assumptions register
 ```
