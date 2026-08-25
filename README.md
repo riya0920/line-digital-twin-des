@@ -321,6 +321,43 @@ a comfortable release of 0.00 h on an instance that had to start 46 minutes
 before time zero. The test walks the sequence forward from the computed release
 and demands every start time match.
 
+## Also in the fifth pass — see [docs/SEQUENCING_GAP.md](docs/SEQUENCING_GAP.md)
+
+```bash
+python run_pass5.py    # ~5 min
+```
+
+The item said or-opt's 10–25% gap needed *a better neighbourhood or a
+metaheuristic*. Both halves are built — random restarts, and simulated annealing
+over the same or-opt neighbourhood — and the gap closes completely where
+Held–Karp can still verify it.
+
+| method | mean gap vs exact (10 jobs) | optimal on | mean vs best (10–40 jobs) | best on | mean time |
+|---|---:|---:|---:|---:|---:|
+| nearest neighbour | +34.2% | 1/4 | +21.3% | 3/10 | 0.00 s |
+| or-opt | +13.9% | 1/4 | +11.4% | 3/10 | 0.21 s |
+| multi-start or-opt | +0.0% | 4/4 | +0.0% | 10/10 | 27.25 s |
+| simulated annealing | +0.0% | 4/4 | +6.1% | 5/10 | 1.60 s |
+
+**The more elaborate method lost.** Multi-start or-opt is best or tied on every
+instance; simulated annealing is best on half of them and averages
++6.1% off. And **annealing is
+not monotone in its budget** — the cooling rate is derived from the iteration
+count, so doubling it runs a *different* search: one instance goes 0% at 2,000
+iterations, 11% at 8,000, 0% again at 20,000. A method that cannot be improved by
+giving it more effort cannot be tuned.
+
+**Nothing predicts when plain or-opt is already enough.** Two explanations were
+tried and both failed: job count (or-opt is short at 10 jobs and fine at 20) and
+product diversity (it should be best at 5 jobs per product and worst at 1.7; the
+measurement is fine at 2.2 and short at both 5.0 and 1.7). So the guidance is the
+boring one — run multi-start; it is never worse, and forty seconds to sequence a
+week of work is not a cost worth optimising.
+
+Above 12 jobs there is still no exact answer, so those columns are scored against
+the best any method found — **a floor, not the optimum**. All four could be well
+short together and the table would look identical.
+
 ## What is NOT built
 
 1. **Still not calibrated against a real line.** Not once. Every distribution,
@@ -343,11 +380,10 @@ and demands every start time match.
    sequence per station, so a product whose bottleneck moves (which
    `bottleneck_by_product` shows happens) is scheduled against the wrong
    constraint.
-5. **Or-opt is a local search with no restarts and no acceptance of worsening
-   moves.** The measured gap to optimal is 10–25% on the harder instances, and
-   closing it needs either a better neighbourhood or a metaheuristic; the exact
-   solver refuses above 12 jobs, so on a real work list the gap would be
-   unmeasured as well as open.
+5. **Above 12 jobs the gap to optimal is still unmeasured.** Held–Karp refuses
+   there, so the scaled comparison is scored against the best of four methods —
+   a floor. All four could be well short of the optimum together and nothing
+   here would show it.
 6. **A replay of a whole shift is still blind to micro-stops.** 240 frames over
    eight hours is one sample every two minutes; the event log has them, the
    default window is the last hour so they are visible, and anything outside that
@@ -363,7 +399,7 @@ src/line.py        model + SimPy engine, per-source streams, wall/busy failure
 src/experiment.py  MSER-5 warm-up, replications, CIs, CRN variance measurement
 src/validation.py  M/M/1 closed form, Little's Law monitor, bottleneck ceiling
 src/realism.py     product mix, asymmetric changeovers, operators, quality loops
-src/sequencing.py  scheduling rules, or-opt, Held-Karp, backward scheduling
+src/sequencing.py  rules, or-opt, restarts, annealing, Held-Karp, backward scheduling
 src/animate.py     replay from the event log, and the reconstruction it replaces
 run_twin.py        validation then scenarios; writes docs/RESULTS.md
 run_pass4.py       sequencing, busy-time clock, replay; writes the pass-4 doc

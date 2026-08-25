@@ -1,0 +1,548 @@
+{
+  "restarts": 40,
+  "sa_iters": 20000,
+  "exact": {
+    "rows": [
+      {
+        "seed": 1,
+        "optimal_s": 2422.7432172005947,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 2422.7432172005947,
+            "gap_pct": 0.0,
+            "optimal": true
+          },
+          "or-opt": {
+            "setup_s": 2422.7432172005947,
+            "gap_pct": 0.0,
+            "optimal": true
+          },
+          "multi-start or-opt": {
+            "setup_s": 2422.7432172005947,
+            "gap_pct": 0.0,
+            "optimal": true
+          },
+          "simulated annealing": {
+            "setup_s": 2422.7432172005947,
+            "gap_pct": 0.0,
+            "optimal": true
+          }
+        }
+      },
+      {
+        "seed": 2,
+        "optimal_s": 2175.2098907652926,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 2748.7252424271055,
+            "gap_pct": 26.36597755906838,
+            "optimal": false
+          },
+          "or-opt": {
+            "setup_s": 2569.230102604079,
+            "gap_pct": 18.11412376854173,
+            "optimal": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 2175.2098907652926,
+            "gap_pct": 0.0,
+            "optimal": true
+          },
+          "simulated annealing": {
+            "setup_s": 2175.2098907652926,
+            "gap_pct": 0.0,
+            "optimal": true
+          }
+        }
+      },
+      {
+        "seed": 5,
+        "optimal_s": 2286.916983790053,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 3447.107250226428,
+            "gap_pct": 50.73163016672424,
+            "optimal": false
+          },
+          "or-opt": {
+            "setup_s": 2541.9706621943164,
+            "gap_pct": 11.152730082119945,
+            "optimal": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 2286.916983790053,
+            "gap_pct": 0.0,
+            "optimal": true
+          },
+          "simulated annealing": {
+            "setup_s": 2286.916983790053,
+            "gap_pct": 0.0,
+            "optimal": true
+          }
+        }
+      },
+      {
+        "seed": 7,
+        "optimal_s": 2679.406005349333,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 4275.300975256645,
+            "gap_pct": 59.56152097596138,
+            "optimal": false
+          },
+          "or-opt": {
+            "setup_s": 3383.6434738076414,
+            "gap_pct": 26.283342914523768,
+            "optimal": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 2679.406005349333,
+            "gap_pct": 0.0,
+            "optimal": true
+          },
+          "simulated annealing": {
+            "setup_s": 2679.406005349333,
+            "gap_pct": 0.0,
+            "optimal": true
+          }
+        }
+      }
+    ],
+    "summary": {
+      "nearest neighbour": {
+        "mean_gap_pct": 34.164782175438496,
+        "max_gap_pct": 59.56152097596138,
+        "n_optimal": 1,
+        "of": 4
+      },
+      "or-opt": {
+        "mean_gap_pct": 13.887549191296362,
+        "max_gap_pct": 26.283342914523768,
+        "n_optimal": 1,
+        "of": 4
+      },
+      "multi-start or-opt": {
+        "mean_gap_pct": 0.0,
+        "max_gap_pct": 0.0,
+        "n_optimal": 4,
+        "of": 4
+      },
+      "simulated annealing": {
+        "mean_gap_pct": 0.0,
+        "max_gap_pct": 0.0,
+        "n_optimal": 4,
+        "of": 4
+      }
+    },
+    "n_jobs": 10
+  },
+  "scaled": {
+    "rows": [
+      {
+        "n_jobs": 10,
+        "n_products": 5,
+        "jobs_per_product": 2.0,
+        "seed": 2,
+        "best_found_s": 2175.2098907652926,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 2748.7252424271055,
+            "seconds": 7.343292236328125e-05,
+            "vs_best_pct": 26.36597755906838,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 2569.230102604079,
+            "seconds": 0.0021016597747802734,
+            "vs_best_pct": 18.11412376854173,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 2175.2098907652926,
+            "seconds": 0.26677370071411133,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 2175.2098907652926,
+            "seconds": 0.9928457736968994,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          }
+        }
+      },
+      {
+        "n_jobs": 10,
+        "n_products": 7,
+        "jobs_per_product": 1.4285714285714286,
+        "seed": 7,
+        "best_found_s": 2679.406005349333,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 4275.300975256645,
+            "seconds": 8.273124694824219e-05,
+            "vs_best_pct": 59.56152097596138,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 3383.6434738076414,
+            "seconds": 0.006551980972290039,
+            "vs_best_pct": 26.283342914523768,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 2679.406005349333,
+            "seconds": 0.34651994705200195,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 2679.406005349333,
+            "seconds": 1.0713021755218506,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          }
+        }
+      },
+      {
+        "n_jobs": 20,
+        "n_products": 7,
+        "jobs_per_product": 2.857142857142857,
+        "seed": 2,
+        "best_found_s": 3123.1656056432566,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 3123.1656056432566,
+            "seconds": 0.0002701282501220703,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "or-opt": {
+            "setup_s": 3123.1656056432566,
+            "seconds": 0.016940593719482422,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "multi-start or-opt": {
+            "setup_s": 3123.1656056432566,
+            "seconds": 3.5354323387145996,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 3123.1656056432566,
+            "seconds": 1.152306079864502,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          }
+        }
+      },
+      {
+        "n_jobs": 20,
+        "n_products": 8,
+        "jobs_per_product": 2.5,
+        "seed": 7,
+        "best_found_s": 3121.5841954922826,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 0.000621795654296875,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "or-opt": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 0.009794950485229492,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "multi-start or-opt": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 2.4965474605560303,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 0.7611172199249268,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          }
+        }
+      },
+      {
+        "n_jobs": 40,
+        "n_products": 8,
+        "jobs_per_product": 5.0,
+        "seed": 2,
+        "best_found_s": 4399.644815115103,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 4996.022736719209,
+            "seconds": 0.00058746337890625,
+            "vs_best_pct": 13.555137895569063,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 4996.022736719209,
+            "seconds": 0.12179899215698242,
+            "vs_best_pct": 13.555137895569063,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 4399.644815115103,
+            "seconds": 39.66088557243347,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 4874.91467510674,
+            "seconds": 1.4707844257354736,
+            "vs_best_pct": 10.80245974308732,
+            "is_best": false
+          }
+        }
+      },
+      {
+        "n_jobs": 40,
+        "n_products": 8,
+        "jobs_per_product": 5.0,
+        "seed": 7,
+        "best_found_s": 3121.5841954922826,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 0.004324197769165039,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "or-opt": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 0.11451458930969238,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "multi-start or-opt": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 42.15118050575256,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 3121.5841954922826,
+            "seconds": 2.305772304534912,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          }
+        }
+      },
+      {
+        "n_jobs": 40,
+        "n_products": 17,
+        "jobs_per_product": 2.3529411764705883,
+        "seed": 2,
+        "best_found_s": 6792.214587667083,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 7869.711088301281,
+            "seconds": 0.004047870635986328,
+            "vs_best_pct": 15.863699338808509,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 6938.705316248855,
+            "seconds": 1.0581026077270508,
+            "vs_best_pct": 2.156744706619859,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 6792.214587667083,
+            "seconds": 51.34772729873657,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 7305.955789475933,
+            "seconds": 3.291133403778076,
+            "vs_best_pct": 7.563677430652323,
+            "is_best": false
+          }
+        }
+      },
+      {
+        "n_jobs": 40,
+        "n_products": 16,
+        "jobs_per_product": 2.5,
+        "seed": 7,
+        "best_found_s": 5899.805999112563,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 9589.713550721568,
+            "seconds": 0.01883554458618164,
+            "vs_best_pct": 62.542862463003594,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 8008.914535704643,
+            "seconds": 0.2086808681488037,
+            "vs_best_pct": 35.7487777887837,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 5899.805999112563,
+            "seconds": 44.86734652519226,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 6759.845148016524,
+            "seconds": 1.6431565284729004,
+            "vs_best_pct": 14.577414054518513,
+            "is_best": false
+          }
+        }
+      },
+      {
+        "n_jobs": 40,
+        "n_products": 20,
+        "jobs_per_product": 2.0,
+        "seed": 2,
+        "best_found_s": 7419.043283328648,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 8015.41238145822,
+            "seconds": 0.0005025863647460938,
+            "vs_best_pct": 8.038355827761173,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 8015.41238145822,
+            "seconds": 0.07278084754943848,
+            "vs_best_pct": 8.038355827761173,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 7419.043283328648,
+            "seconds": 52.24078726768494,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 8390.47101894866,
+            "seconds": 1.5841889381408691,
+            "vs_best_pct": 13.093706270765527,
+            "is_best": false
+          }
+        }
+      },
+      {
+        "n_jobs": 40,
+        "n_products": 19,
+        "jobs_per_product": 2.1052631578947367,
+        "seed": 7,
+        "best_found_s": 6996.168118726499,
+        "methods": {
+          "nearest neighbour": {
+            "setup_s": 8884.393161642149,
+            "seconds": 0.005582094192504883,
+            "vs_best_pct": 26.98941779088293,
+            "is_best": false
+          },
+          "or-opt": {
+            "setup_s": 7730.946579678061,
+            "seconds": 0.5369687080383301,
+            "vs_best_pct": 10.502584393087918,
+            "is_best": false
+          },
+          "multi-start or-opt": {
+            "setup_s": 6996.168118726499,
+            "seconds": 35.60765838623047,
+            "vs_best_pct": 0.0,
+            "is_best": true
+          },
+          "simulated annealing": {
+            "setup_s": 8077.5038913630915,
+            "seconds": 1.7715468406677246,
+            "vs_best_pct": 15.456114751476639,
+            "is_best": false
+          }
+        }
+      }
+    ],
+    "summary": {
+      "nearest neighbour": {
+        "mean_vs_best_pct": 21.2916971851055,
+        "max_vs_best_pct": 62.542862463003594,
+        "n_best": 3,
+        "of": 10,
+        "mean_seconds": 0.00349278450012207
+      },
+      "or-opt": {
+        "mean_vs_best_pct": 11.43990672948872,
+        "max_vs_best_pct": 35.7487777887837,
+        "n_best": 3,
+        "of": 10,
+        "mean_seconds": 0.214823579788208
+      },
+      "multi-start or-opt": {
+        "mean_vs_best_pct": 0.0,
+        "max_vs_best_pct": 0.0,
+        "n_best": 10,
+        "of": 10,
+        "mean_seconds": 27.252085900306703
+      },
+      "simulated annealing": {
+        "mean_vs_best_pct": 6.149337225050032,
+        "max_vs_best_pct": 15.456114751476639,
+        "n_best": 5,
+        "of": 10,
+        "mean_seconds": 1.6044153690338134
+      }
+    },
+    "oropt_enough_at": [
+      [
+        20,
+        2.9
+      ],
+      [
+        20,
+        2.5
+      ],
+      [
+        40,
+        5.0
+      ]
+    ],
+    "oropt_short_at": [
+      [
+        10,
+        2.0
+      ],
+      [
+        10,
+        1.4
+      ],
+      [
+        40,
+        5.0
+      ],
+      [
+        40,
+        2.4
+      ],
+      [
+        40,
+        2.5
+      ],
+      [
+        40,
+        2.0
+      ],
+      [
+        40,
+        2.1
+      ]
+    ]
+  },
+  "elapsed_s": 297.5749547481537
+}

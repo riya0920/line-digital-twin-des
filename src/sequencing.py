@@ -381,3 +381,146 @@ def demo_jobs(n_products: int = 4, n_jobs: int = 9, seed: int = 3,
             due_s=float(rng.uniform(0.35, 1.0) * tightness * total_run),
             ready_s=0.0, run_s_per_part=run_s_per_part))
     return jobs
+
+
+# ---------------------------------------------------------------------------
+# beyond a local search
+# ---------------------------------------------------------------------------
+
+def _neighbour(seq: list, rng, max_seg: int = 3) -> list:
+    """One or-opt move, chosen at random rather than by scanning.
+
+    Still or-opt and still no reversal -- the asymmetry argument from `improve`
+    does not stop applying because the search got cleverer. What changes is only
+    which move is tried: a random one, so the search can go downhill.
+    """
+    n = len(seq)
+    if n < 3:
+        return list(seq)
+    seg = int(rng.integers(1, min(max_seg, n - 1) + 1))
+    i = int(rng.integers(0, n - seg + 1))
+    block = seq[i:i + seg]
+    rest = seq[:i] + seq[i + seg:]
+    j = int(rng.integers(0, len(rest) + 1))
+    return rest[:j] + block + rest[j:]
+
+
+def simulated_annealing(jobs, matrix: dict, *, start_product=None,
+                        seed: int = 0, iters: int = 20000,
+                        t0: float | None = None, t_end: float | None = None,
+                        max_seg: int = 3):
+    """Or-opt moves with a temperature, so the search can leave a local optimum.
+
+    WHY THE TEMPERATURE IS SET FROM THE DATA. A hand-picked t0 is a hidden fit
+    to one instance: too cold and this is `improve` with extra steps, too hot and
+    it is a random walk for most of its budget. Here t0 is the mean absolute cost
+    change over a sample of random moves, so it starts by accepting a typical
+    worsening move about a third of the time whatever the matrix is scaled in --
+    minutes, hours or dimensionless.
+
+    Geometric cooling to `t_end`, which defaults to t0/1000; at that point a
+    typical worsening move is accepted with probability e^-1000, which is never.
+    """
+    seq = list(jobs)
+    if len(seq) < 3:
+        return seq
+    rng = np.random.default_rng(seed)
+
+    if t0 is None:
+        deltas = []
+        probe = list(seq)
+        base = _setup_of(probe, matrix, start_product)
+        for _ in range(200):
+            cand = _neighbour(probe, rng, max_seg)
+            deltas.append(abs(_setup_of(cand, matrix, start_product) - base))
+        t0 = float(np.mean(deltas)) or 1.0
+    t_end = t_end if t_end is not None else t0 / 1000.0
+
+    cur = seq
+    cur_cost = _setup_of(cur, matrix, start_product)
+    best, best_cost = list(cur), cur_cost
+    cooling = (t_end / t0) ** (1.0 / max(iters - 1, 1))
+    t = t0
+    accepted = worse_accepted = 0
+
+    for _ in range(iters):
+        cand = _neighbour(cur, rng, max_seg)
+        cost = _setup_of(cand, matrix, start_product)
+        d = cost - cur_cost
+        if d <= 0 or rng.random() < np.exp(-d / max(t, 1e-12)):
+            cur, cur_cost = cand, cost
+            accepted += 1
+            if d > 0:
+                worse_accepted += 1
+            if cost < best_cost:
+                best, best_cost = list(cand), cost
+        t *= cooling
+
+    # A final downhill pass. Annealing ends wherever the last accepted move left
+    # it, and the cheapest possible improvement is to run the deterministic local
+    # search once from the best point found.
+    best = improve(best, matrix, start_product=start_product, max_seg=max_seg)
+    simulated_annealing.last_stats = {
+        "iters": iters, "t0": t0, "t_end": t_end,
+        "accepted": accepted, "worse_accepted": worse_accepted,
+        "worse_accept_frac": worse_accepted / max(accepted, 1)}
+    return best
+
+
+def multi_start(jobs, matrix: dict, *, start_product=None, seed: int = 0,
+                restarts: int = 40, max_seg: int = 3):
+    """Or-opt from many random starts, keeping the best.
+
+    The cheap half of the README's suggestion, and worth measuring separately:
+    if restarts alone close the gap, the annealing schedule is complexity
+    nobody needed. The first start is nearest-neighbour, so this can never be
+    worse than what `rule_min_setup` already does.
+    """
+    rng = np.random.default_rng(seed)
+    best = improve(nearest_neighbour(jobs, matrix, start_product), matrix,
+                   start_product=start_product, max_seg=max_seg)
+    best_cost = _setup_of(best, matrix, start_product)
+    for _ in range(restarts - 1):
+        order = list(jobs)
+        rng.shuffle(order)
+        cand = improve(order, matrix, start_product=start_product,
+                       max_seg=max_seg)
+        c = _setup_of(cand, matrix, start_product)
+        if c < best_cost:
+            best, best_cost = cand, c
+    return best
+
+
+def gap_to_optimal(jobs, matrix: dict, start_product=None, **kw) -> dict:
+    """Every method against the exact answer, where the exact answer exists.
+
+    This is the number `improve` could not produce about itself, and the reason
+    Held-Karp is in this module at all.
+    """
+    exact = optimal_setup(jobs, matrix, start_product)
+    out = {"n_jobs": len(jobs), "exact_feasible": exact["feasible"]}
+    if not exact["feasible"]:
+        out["why"] = exact["why"]
+        return out
+    opt = exact["setup_s"]
+    methods = {
+        "nearest neighbour": nearest_neighbour(jobs, matrix, start_product),
+        "or-opt": rule_min_setup(jobs, matrix, start_product=start_product),
+        "multi-start or-opt": multi_start(jobs, matrix,
+                                          start_product=start_product,
+                                          seed=kw.get("seed", 0),
+                                          restarts=kw.get("restarts", 40)),
+        "simulated annealing": simulated_annealing(
+            jobs, matrix, start_product=start_product,
+            seed=kw.get("seed", 0), iters=kw.get("iters", 20000)),
+    }
+    out["optimal_s"] = opt
+    out["methods"] = {}
+    for name, seq in methods.items():
+        c = _setup_of(seq, matrix, start_product)
+        out["methods"][name] = {
+            "setup_s": c,
+            "gap_pct": 100.0 * (c - opt) / max(opt, 1e-9),
+            "optimal": abs(c - opt) < 1e-6,
+        }
+    return out
