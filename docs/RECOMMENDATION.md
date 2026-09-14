@@ -25,7 +25,7 @@ non-constraint stations.)*
 
 The constraint option delivers the largest gain and is the only one that costs no
 inventory. By Little's Law the buffer options buy throughput *and* WIP *and* cycle
-time — the same purchase. Enlarging every buffer from 5 to 20 raises mean WIP from
+time: the same purchase. Enlarging every buffer from 5 to 20 raises mean WIP from
 21 to 52 units, which is working capital
 and floor space that no throughput number shows.
 
@@ -46,12 +46,12 @@ and it is now measured rather than asserted. Buffer benefit from 2 → 20:
 If the real stations are more variable than assumed, the conveyor gets better and
 could overtake the constraint option. **Before releasing the PO, measure the cv of
 the real station cycle times.** That is one query against an MES that keeps raw
-cycle times — and impossible against one that keeps only averages.
+cycle times, and impossible against one that keeps only averages.
 
 **2. The model is optimistic by construction.** Adding the four omitted loss
 categories drops throughput from 51.0 to 32.7 parts/h
 (36%). The relative ranking of the options is stable
-across that change, which is why the recommendation stands — but the absolute
+across that change, which is why the recommendation stands, but the absolute
 gains should be read as upper bounds.
 
 **3. Calibration status: none.** This model has never been compared against the
@@ -70,7 +70,7 @@ backwards.
   of which is a simulation output.
 - That the constraint stays the constraint. Speed up S3-weld enough and the
   constraint moves, and every number here is re-derived from scratch. The
-  10% speedup modelled is small enough that it does not move — a larger
+  10% speedup modelled is small enough that it does not move: a larger
   investment would need re-running.
 
 ## The one-line version

@@ -219,7 +219,7 @@ button{{padding:6px 14px;border:1px solid var(--line);background:transparent;
   <div class="note"><b>Watch the buffer in front of the constraint fill while
    the station after it starves.</b> That is the bottleneck result, and it is
    the form of it a plant manager believes. Animation is also the fastest
-   debugger a discrete-event model has — parts moving backwards or a buffer over
+   debugger a discrete-event model has: parts moving backwards or a buffer over
    capacity are obvious in two seconds and can hide indefinitely in a summary
    statistic.</div>
   <div class="note"><b>Provenance:</b> {mode_note}</div>

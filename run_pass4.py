@@ -229,11 +229,11 @@ def report(d: dict) -> str:
     # --- sequencing
     A("## 1. A scheduler, not a price list\n")
     A("`realism.py` had an asymmetric changeover matrix and a `sequence_cost` "
-      "that could price a sequence. It had no way to produce one — "
+      "that could price a sequence. It had no way to produce one: "
       "`batch_size_sweep` built a round-robin, A B C D A B C D, which on an "
       "asymmetric matrix is close to the worst order available.\n")
     A(f"**The round-robin costs {sq_['round_robin_s'] / 3600:.2f} h of changeover "
-      f"against an optimum of {sq_['exact_setup_s'] / 3600:.2f} h — "
+      f"against an optimum of {sq_['exact_setup_s'] / 3600:.2f} h: "
       f"{sq_['round_robin_penalty_pct']:.0f}% worse.** Every batch-size number "
       "that sweep published carried that penalty, and it had nothing to do with "
       "batch size.\n")
@@ -252,7 +252,7 @@ def report(d: dict) -> str:
       f"({edd['max_lateness_s'] / 3600:.2f} h against ATC's "
       f"{atc['max_lateness_s'] / 3600:.2f} h), and puts more jobs late than FIFO "
       f"does.** Jackson's rule says earliest-due-date minimises maximum lateness, "
-      "and it is a theorem — for a single machine with *no sequence-dependent "
+      "and it is a theorem: for a single machine with *no sequence-dependent "
       "setups*. Here EDD spends "
       f"{(edd['setup_s'] - ms['setup_s']) / 3600:.2f} h more on changeovers than "
       "it needs to, and that time comes straight out of the due dates it was "
@@ -281,7 +281,7 @@ def report(d: dict) -> str:
     A("\nHeld–Karp is O(n²·2ⁿ) and refuses above 12 jobs rather than hanging. It "
       "is here to answer the one question a heuristic cannot answer about "
       "itself: **how far from optimal is it?** Or-opt roughly halves the "
-      "nearest-neighbour gap and does not close it — publishing the heuristic's "
+      "nearest-neighbour gap and does not close it: publishing the heuristic's "
       "cost without the exact number would be publishing a number with no scale.\n")
 
     A("\n### Backward scheduling\n")
@@ -292,7 +292,7 @@ def report(d: dict) -> str:
     A(f"- Promised at exactly the total run time: release "
       f"**{t['release_s'] / 3600:.2f} h**, i.e. {abs(t['release_s']) / 60:.0f} "
       f"minutes *before* time zero. Infeasible, and the size of the negative "
-      f"number is how much has to give — it is exactly the "
+      f"number is how much has to give: it is exactly the "
       f"{t['total_setup_s'] / 3600:.2f} h of changeover the promise forgot.\n")
     A(f"- Promised at 1.4× the run time: release "
       f"**{lo['release_s'] / 3600:.2f} h**, feasible with that much slack.\n")
@@ -301,7 +301,7 @@ def report(d: dict) -> str:
       "setups that came *before* it. Walking backwards, a setup pushes "
       "everything ahead of it *earlier*, so the shift on job *i* is the total of "
       "the setups *after* it. Both versions land the last job exactly on the due "
-      "date, which is the number a reader checks — the wrong one reported a "
+      "date, which is the number a reader checks: the wrong one reported a "
       "comfortable release of 0.00 h on an instance that had to start 46 minutes "
       "before time zero. The test that catches it walks the sequence forward "
       "from the computed release and demands every start time match.\n")
@@ -311,7 +311,7 @@ def report(d: dict) -> str:
     A("A machine starved half the day does not accumulate wear while it sits "
       "there. The engine now clocks the failure process on busy seconds: a "
       "station carries a remaining *busy* life, the cycle is split when that life "
-      "runs out mid-part, and the repair starts there — so a breakdown lands in "
+      "runs out mid-part, and the repair starts there, so a breakdown lands in "
       "the middle of the work rather than tidily between parts.\n")
     A("What it replaces is the first-order version: scale each station's MTBF by "
       "its utilisation. That was described in the README as *the first-order "
@@ -324,11 +324,11 @@ def report(d: dict) -> str:
       f"{bc['first_order']['half_width']:.2f} | "
       f"{bc['first_order_overshoot']:+.2f} |")
     A(f"| **exact busy-time** | **{bc['exact']['throughput']:.2f} ± "
-      f"{bc['exact']['half_width']:.2f}** | — |")
+      f"{bc['exact']['half_width']:.2f}** | N/A |")
     A(f"\n**The approximation overshoots by {bc['first_order_overshoot']:.2f} "
       f"parts/hour ({bc['first_order_error_pct']:.1f}%), which is "
       f"{abs(bc['first_order_overshoot'] / bc['correction_size']):.1f}× the size "
-      f"of the entire correction it was making** — busy-time clocking is worth "
+      f"of the entire correction it was making**: busy-time clocking is worth "
       f"{bc['correction_size']:+.2f} parts/hour against wall-clock, and the "
       "approximation of it lands further from the answer than the thing it was "
       "correcting, in the same direction. It corrected past the target.\n")
@@ -341,7 +341,7 @@ def report(d: dict) -> str:
           f"{r['down_first_order']:.4f} | {r['down_exact']:.4f} | "
           f"{r['first_order_error_pct']:+.1f}% |")
     worst = max(bc["per_station"], key=lambda r: r["utilisation"])
-    A(f"\n**The approximation is worst at the constraint** — {worst['station']}, "
+    A(f"\n**The approximation is worst at the constraint**: {worst['station']}, "
       f"at {worst['utilisation']:.0%} utilisation, where it understates downtime "
       f"by {abs(worst['first_order_error_pct']):.0f}%. That is the one station "
       "whose downtime costs throughput, so the error lands entirely on the "
@@ -363,7 +363,7 @@ def report(d: dict) -> str:
       f"{sw['rows'][-1]['utilisation']:.0%}) and degrades as the station fills "
       f"up ({sw['rows'][0]['first_order_error_pct']:+.1f}% at "
       f"{sw['rows'][0]['utilisation']:.0%}).\n")
-    A("**Utilisation is endogenous** — it is measured *under* the failure regime "
+    A("**Utilisation is endogenous**: it is measured *under* the failure regime "
       "you are trying to correct, so plugging in the wall-clock value is a "
       "one-step estimate of a fixed point, and it is biased exactly where "
       "utilisation is most sensitive to downtime: at the constraint. That is the "
@@ -375,12 +375,12 @@ def report(d: dict) -> str:
     # --- replay
     A("\n## 3. The animation is now a replay\n")
     A(f"The engine logs every station state transition and the buffer levels at "
-      f"the instant they changed — {rp['n_events']:,} events over an eight-hour "
+      f"the instant they changed: {rp['n_events']:,} events over an eight-hour "
       f"shift, about {rp['events_per_part']:.1f} per part. Transitions rather "
       "than periodic samples: a sampled log has to choose a rate, and any rate "
       "coarse enough to be cheap misses the micro-stops that are the reason to "
       "watch a line second by second.\n")
-    A("Logging is off by default and does not perturb the run — the same seed "
+    A("Logging is off by default and does not perturb the run: the same seed "
       "with and without a log produces bit-identical throughput, which is "
       "asserted in the tests.\n")
 
@@ -411,7 +411,7 @@ def report(d: dict) -> str:
       f"{rs['upstream_mean']:.1f} of 5 in front of the weld cell in the replay "
       f"and drain to {rs['downstream_mean']:.2f} behind it; the reconstruction "
       f"showed {cs['upstream_mean']:.1f} in front and {cs['downstream_mean']:.1f} "
-      "behind — parts piling up *after* the bottleneck. The README's stated "
+      "behind: parts piling up *after* the bottleneck. The README's stated "
       "reason for having an animation at all was that a plant manager watching "
       "parts pile up in front of S3 believes the bottleneck result. The "
       "animation was piling them up on the wrong side.\n")
@@ -422,7 +422,7 @@ def report(d: dict) -> str:
       "what a bottleneck looks like.\n")
     A("\nBoth renderers are kept, each labelled with its own provenance in the "
       "page, and `render(mode=\"auto\")` refuses to claim a replay it does not "
-      "have — a result from `experiment.replicate` carries no log, and "
+      "have: a result from `experiment.replicate` carries no log, and "
       "re-simulating to get one would animate a *different run* beside the "
       "summary it is captioned with.\n")
     return "\n".join(L) + "\n"

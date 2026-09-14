@@ -150,14 +150,14 @@ def report(d: dict) -> str:
     A("# Closing the sequencing gap, and which method earns its keep\n")
     A("The README's item: *or-opt is a local search with no restarts and no "
       "acceptance of worsening moves … closing it needs either a better "
-      "neighbourhood or a metaheuristic.* Both suggestions are built — random "
+      "neighbourhood or a metaheuristic.* Both suggestions are built: random "
       "restarts, and simulated annealing over the same or-opt neighbourhood.\n")
     A("**Still or-opt, still no reversal.** The asymmetry argument does not stop "
       "applying because the search got cleverer: 2-opt's O(1) move evaluation is "
       "only valid on a symmetric matrix. What changes is which move is tried and "
       "whether a worse one is accepted.\n")
     A("**The temperature is set from the data, not chosen.** A hand-picked "
-      "starting temperature is a hidden fit to one instance — too cold and it is "
+      "starting temperature is a hidden fit to one instance: too cold and it is "
       "`improve` with extra steps, too hot and it is a random walk. It is the "
       "mean absolute cost change over a sample of random moves, so it behaves "
       "the same whether the matrix is in minutes, hours or anything else.\n")
@@ -180,13 +180,13 @@ def report(d: dict) -> str:
       f"on {ms['n_optimal']} of {ms['of']} instances, against or-opt's mean "
       f"{ex['summary']['or-opt']['mean_gap_pct']:+.1f}%. The item is answered.\n")
     if ms["n_optimal"] == sa["n_optimal"] == ms["of"]:
-        A("And **the annealing schedule buys nothing here** — random restarts "
+        A("And **the annealing schedule buys nothing here**: random restarts "
           "alone find the same optima. That was worth measuring separately "
           "rather than assuming the more elaborate method is the better one.\n")
 
     A("\n## Above 12 jobs, where no exact answer exists\n")
     A("Scored against the best any method found, which is a **floor and not the "
-      "optimum** — every gap below could be understating how far all four are "
+      "optimum**: every gap below could be understating how far all four are "
       "from the real answer.\n")
     A("| jobs | products | jobs/product | seed | " + " | ".join(NAMES) + " |")
     A("|---:|---:|---:|---:|" + "---:|" * len(NAMES))
@@ -218,7 +218,7 @@ def report(d: dict) -> str:
     A("\n### Annealing is not monotone in its budget\n")
     A("More iterations is not a finer search. The cooling rate is derived from "
       "the iteration count, so doubling the budget runs a *different* search "
-      "rather than a longer one — on one instance the gap goes 0% at 2,000 "
+      "rather than a longer one: on one instance the gap goes 0% at 2,000 "
       "iterations, 11% at 8,000, and 0% again at 20,000. A method whose answer "
       "does not improve monotonically with effort cannot be tuned by giving it "
       "more, which is a second and independent reason to prefer restarts.\n")
@@ -227,12 +227,12 @@ def report(d: dict) -> str:
     A(f"Or-opt already finds the best known answer at "
       f"{sc['oropt_enough_at']} (jobs, jobs-per-product) and falls short at "
       f"{sc['oropt_short_at']}.\n")
-    A("**Two explanations were tried and both failed.** The first was job count "
-      "— but or-opt is short at 10 jobs and fine at 20. The second was product "
+    A("**Two explanations were tried and both failed.** The first was job count"
+      ", but or-opt is short at 10 jobs and fine at 20. The second was product "
       "diversity: with few products and many jobs each, grouping by product is "
       "nearly optimal and easy to find. That predicts or-opt should do best at "
       "5 jobs per product and worst at 1.7, and the measurement is the other way "
-      "round — fine at 2.2, short at both 5.0 and 1.7.\n")
+      "round: fine at 2.2, short at both 5.0 and 1.7.\n")
     A("So the honest guidance is the boring one: **run multi-start**. It is "
       "never worse, the instances where a cheaper search would have been enough "
       "are not identifiable in advance, and forty seconds to sequence a week of "

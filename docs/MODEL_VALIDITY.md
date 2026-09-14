@@ -1,4 +1,4 @@
-# Model validity — the assumptions register
+# Model validity: the assumptions register
 
 All models are wrong. This document is the operational version of that: what is
 modelled, what is not, which conclusions are sensitive to which assumption, and
@@ -12,7 +12,7 @@ A simulation without this document is a number generator that people trust.
 
 | element | how | fidelity |
 |---|---|---|
-| 6 stations in series | SimPy processes | structural — a real line has parallel machines, rework loops, and merges |
+| 6 stations in series | SimPy processes | structural: a real line has parallel machines, rework loops, and merges |
 | cycle times | lognormal, mean and CV per station | shape is an assumption; see §3.1 |
 | finite buffers | SimPy `Store` with capacity | blocking and starvation emerge correctly |
 | failures | exponential MTBF, exponential MTTR | see §3.2 |
@@ -40,7 +40,7 @@ optimistic gets used to justify a capital decision.
 
 **The 82%-of-theory question.** This model achieves ~93% of its constraint's
 effective capacity. A real line commonly achieves 65–70% of theoretical. The
-missing points are the table above, in roughly that order — and if a real line and
+missing points are the table above, in roughly that order, and if a real line and
 this model disagree by 20 points, the answer is almost never "the simulation is
 wrong about queueing" and almost always "the simulation is missing a loss
 category".
@@ -62,7 +62,7 @@ not a defensible simplification.
 
 ### 3.2 Failures: exponential MTBF and MTTR
 
-Exponential MTBF means a constant hazard rate — a machine that has run for 8 hours
+Exponential MTBF means a constant hazard rate: a machine that has run for 8 hours
 is exactly as likely to fail in the next minute as one that just started. That is
 wrong for wear-out failures (which is what ML-1 and ML-3 in this portfolio are
 about) and roughly right for random electrical and control faults.
@@ -74,7 +74,7 @@ same mean under-represents both ends.
 **Sensitivity: high for the MTTR-reduction scenario.** "MTTR halved at the
 constraint" is a headline result and it assumes halving is uniform across the
 distribution. If the real distribution is bimodal, halving the mean by attacking
-the long tail is a different project — and a different budget — from halving it by
+the long tail is a different project, and a different budget, from halving it by
 attacking the short resets.
 
 ### 3.3 Failures occur in wall-clock time, not in operating time
@@ -84,14 +84,14 @@ starved or blocked. For a machine whose wear is driven by cycles, failure should
 clocked on busy time. **This biases availability down slightly**, and more so for
 low-utilisation stations. It is not corrected.
 
-## 4. Statistical method — what IS defensible
+## 4. Statistical method: what IS defensible
 
 These are the parts that would survive review:
 
 - **M/M/1 validation across four utilisation levels** with L and W inside the
   confidence interval at 3 of 4 (see §5 for the fourth).
 - **Little's Law checked on every run**, 510 runs, 1 failure at a 5% tolerance,
-  with the residual's convergence with horizon length demonstrated — which is what
+  with the residual's convergence with horizon length demonstrated, which is what
   shows the residual is a finite-window boundary effect and not an entity leak.
 - **Warm-up truncation by MSER-5** on the replication-averaged WIP series, rather
   than by eye.
@@ -105,7 +105,7 @@ These are the parts that would survive review:
 
 **M/M/1 at ρ = 0.5: W measures 122.2 ± 1.7 s against a theoretical 120.0.** L is
 inside its interval; W is not, by about 1.3 half-widths. The bias is positive and
-small, and it shrinks at higher ρ where the intervals are wider — which is the
+small, and it shrinks at higher ρ where the intervals are wider, which is the
 signature of a small systematic effect being resolved by a tight interval rather
 than of a large error.
 
@@ -114,21 +114,21 @@ Law: W is averaged over parts that *completed* in the window, which over-weights
 parts that entered before it. **It is not chased down.** Reporting it as 3/4 rather
 than rounding it to "validated" is the honest handling.
 
-## 6. Calibration guidance — pointing this at a real line
+## 6. Calibration guidance: pointing this at a real line
 
 Per parameter, what would have to be measured and how:
 
 | parameter | source | difficulty |
 |---|---|---|
-| mean cycle time per station per product | MES cycle records or a time study | easy if an MES exists — see SE-2 |
-| cycle-time **distribution** | the same records, but you need the raw values, not the average | **most plants only keep the average** — this is usually the blocker |
+| mean cycle time per station per product | MES cycle records or a time study | easy if an MES exists, see SE-2 |
+| cycle-time **distribution** | the same records, but you need the raw values, not the average | **most plants only keep the average**: this is usually the blocker |
 | MTBF | maintenance work orders, filtered to genuine functional failures | hard; see ML-1's DEPLOYMENT_REALITY §5 on work-order label noise |
 | MTTR distribution | work-order open/close timestamps | timestamps are when somebody typed, not when the machine stopped |
 | buffer capacities | walk the line and count | easy, and frequently different from the drawing |
 | blocking/starvation fractions | machine state data | this is exactly what DATA-1's OEE platform produces |
 
 **The validation protocol before anybody spends money:** run the model against a
-historical period, compare simulated throughput, WIP, and — most importantly — the
+historical period, compare simulated throughput, WIP, and, most importantly, the
 *blocking and starvation fractions per station* against measured ones. Throughput
 alone is a weak test: a model can hit the right throughput with entirely the wrong
 internal dynamics, and then get the buffer recommendation backwards.
@@ -142,12 +142,12 @@ Before a purchase order:
    1.5 parts/h ± 1.2. That is barely distinguishable from noise at 30 replications
    and the CI is in the table.
 2. **The WIP column is the price.** By Little's Law, buffer space bought as
-   throughput is also bought as inventory and as cycle time — those are the same
+   throughput is also bought as inventory and as cycle time: those are the same
    purchase. Buffer 20 nearly doubles WIP relative to buffer 5. A throughput-only
    recommendation is selling half a transaction.
 3. **§2 and §3.** Every omitted loss category biases throughput up, and the
-   cycle-time distribution — the assumption the buffer result is most sensitive to
-   — is unvalidated.
+   cycle-time distribution, the assumption the buffer result is most sensitive to,
+   is unvalidated.
 4. **Calibration status: none.** This model has never been compared against a real
    line.
 
